@@ -6,6 +6,7 @@
     <meta content='width=device-width; height=device-height; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     <meta name="license" content="
+        Copyright 2023 Cenab Batu Bora
         Copyright 2013 Abram Hindle
         
         Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,13 +35,19 @@ var H = canvas.height = window.innerHeight-50;
 
 function sendJSONXMLHTTPRequest(method, url, objects, callback) {
     var xhr = new XMLHttpRequest();
+
     xhr.onreadystatechange = function () {
-        if (xhr.readyState==4 && xhr.status==200) {
+        if (xhr.readyState==4) {
+            try {
+                if (xhr.status==200) {
                     //XXX: parse some JSON from the request!
                     //XXX: Pass the data to the callback!
-
-            callback(JSON.parse(xhr.responseText));
-
+                    callback(JSON.parse(xhr.responseText));
+                }
+            } 
+            catch(e) {
+                alert('Error: ' + e.name);
+            }
         }
     };
     //XXX: POST to a URL
@@ -52,7 +59,7 @@ function sendJSONXMLHTTPRequest(method, url, objects, callback) {
     //xhr.send(JSON.stringify(objects));
     if (method == "POST") {
         //XXX: POST to a URL
-        xhr.open('POST', url, true);
+        xhr.open("POST", url, true);
         //XXX: set the mimetype and the accept headers!
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("Accept", "application/json");
@@ -60,7 +67,7 @@ function sendJSONXMLHTTPRequest(method, url, objects, callback) {
     }
     else {
         //XXX: POST to a URL
-        xhr.open('GET', url, true);
+        xhr.open("GET", url, true);
         //XXX: set the mimetype and the accept headers!
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("Accept", "application/json");
@@ -157,14 +164,12 @@ function callback_drawNextFrame(xmlhttp) {
 function addEntity(entity, data) {
     world[entity] = data;
     url = '/entity/' + entity
-    // drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just  modified!
     sendJSONXMLHTTPRequest("POST",url,world[entity],callback_drawNextFrame)
 }
 
 var counter = 0;
 function addEntityWithoutName(data) {
-    //var name = "X"+Math.floor((Math.random()*100)+1);
     var name = "X"+(counter++)%500;
     addEntity(name, data);
 }
@@ -280,16 +285,9 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
                           'radius':10});
 });
 
-function get_world(data){
-    // console.log(data)
-    world = data
-    drawFrame();
-}
-
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
     sendJSONXMLHTTPRequest("GET", '/world', {}, function (data){
-    // console.log(data)
     world = data
     drawFrame();})
     drawNextFrame();

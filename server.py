@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+#Copyright 2023 Cenab Batu Bora
 # Copyright 2013 Abram Hindle
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,23 +81,23 @@ def hello():
 def update(entity):
     '''update the entities via this interface'''
     myWorld.set(entity, flask_post_json())
-    return (myWorld.get(entity), 200, {'ContentType': 'application/json'}) 
+    return (myWorld.get(entity),200,{'ContentType': 'application/json'}) 
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
-    return (myWorld.world(), 200, {'ContentType': 'application/json'})
+    return (myWorld.world(),200,{'ContentType': 'application/json'})
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-    return (myWorld.get(entity), 200, {'ContentType': 'application/json'})
+    return (myWorld.get(entity),200,{'ContentType': 'application/json'})
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
     myWorld.clear()
-    return ({}, 200, {})
+    return ({},200,{})
 
 if __name__ == "__main__":
     app.run()
